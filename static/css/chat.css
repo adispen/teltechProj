@@ -1,0 +1,40 @@
+#chatPanel {
+    position: fixed;
+    bottom: 1px;
+    width: 800px;
+    display: none;
+    padding-left: 5%;
+}
+
+.log {
+  color: gray;
+  font-size: 70%;
+  margin: 5px;
+  text-align: center;
+}
+
+/* Messages */
+
+.chatArea {
+  height: 250px;
+}
+
+.messages {
+  height: 250px;
+  margin: 0;
+  overflow-y: scroll;
+  padding: 10px 20px 10px 20px;
+  list-style-type: none;
+}
+
+.message.typing .messageBody {
+  color: gray;
+}
+
+.username {
+  float: left;
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 5px;
+  text-align: right;
+}

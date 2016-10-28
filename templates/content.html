@@ -1,0 +1,55 @@
+{% extends "index.html" %}
+{% block modal %}
+
+    <div class="modal fade" id="loginModal">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content" style="text-align:center;">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	        <h4 class="modal-title">Need assistance? Chat with a support associate</h4>
+	      </div>
+	      <div class="modal-body">
+			<p> Please enter your first name and an email address where we can contact you.</p>
+			<div class="form">
+				<input class="usernameInput form-control" type="text" maxlength="14" placeholder="First Name"></input>
+			</div>
+			<div class="emailForm">
+				<input class="emailInput form-control" type="text" placeholder="Email Address"></input>
+			</div>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+{% endblock %}
+
+{% block chatbox %}
+<div id="chatPanel" class="chat page" class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="accordion">
+                    <span class="glyphicon glyphicon-comment"></span> Chat
+                    <div class="btn-group pull-right">
+                        <a id="menu-button" type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            <span id="menu-glyph" class="glyphicon glyphicon-plus"></span>
+                        </a>
+                    </div>
+                </div>
+            <div class="panel-collapse collapse" id="collapseOne">
+                <div class="panel-body">
+                    <div class="chatArea">
+                        <ul class="messages"></ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                <input id="text" type="text" class="form-control input-sm inputMessage" placeholder="Type your message here..." />
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
