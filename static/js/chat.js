@@ -36,24 +36,22 @@ $(function() {
     
     var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
-	function addParticipantsMessage (data) {
-	  var message = '';
-	  if (data.numUsers === 1) {
-	    message += "there's 1 participant";
-	  } else {
-	    message += "there are " + data.numUsers + " participants";
-	  }
-	  log(message);
-	}
+    function addParticipantsMessage (data) {
+        var message = '';
+        if (data.numUsers === 1) {
+            message += "there's 1 participant";
+        } else {
+            message += "there are " + data.numUsers + " participants";
+        }
+        log(message);
+    }
     
     // Sets the client's username
     function setUsername () {
       username = cleanInput($usernameInput.val().trim());
-      console.log('here we go');
       if ($page === '/'){
         email = cleanInput($emailInput.val().trim());
         if (username && email) {
-          console.log('we got em both');
           $loginModal.modal('toggle');
           $chatPage.show();
           $currentInput = $inputMessage.focus();
@@ -66,7 +64,6 @@ $(function() {
 
       if ($page === '/chat'){
         if (username) {
-          console.log('username is here');
           $loginPage.fadeOut();
           $chatPage.show();
           $loginPage.off('click');
@@ -212,7 +209,6 @@ $(function() {
     if ($page === '/'){
         $loginModal.on('hidden.bs.modal', function(){
             if (!$chatPage.is(':visible')){
-                console.log('hidden');
                 $('#invite-button').show();
             }
         });
@@ -221,7 +217,6 @@ $(function() {
             $('#invite-button').hide();
         });
 		$('#menu-button').click(function() {
-			console.log('ayy'); 
 			$('#menu-glyph').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
 		});
 
@@ -240,7 +235,7 @@ $(function() {
           if ($page === '/'){
               // Check if fields are both filled in
               if ($emailInput.val() === '' || $usernameInput.val() === ''){
-                  console.log('empty field');
+                  alert('Please fill out both fields');
               } else {
                   setUsername();
               }
