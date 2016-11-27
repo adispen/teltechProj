@@ -1,5 +1,6 @@
 from flask import Flask, render_template, session, request, jsonify, Response, abort
 from flask.ext.socketio import SocketIO, emit, disconnect
+from sqlalchemy import *
 from models import db, User, ChatSession, Message
 import json
 
@@ -24,15 +25,12 @@ def create_session():
     db.session.add(chat_session)
     db.session.commit()
     chatSessionID = chat_session.id
-    print chatSessionID
 
 @app.route('/get_reps', methods=['GET'])
 def get_reps():
         reps = User.query.filter_by(rep=True).all()
         repList = []
         for item in reps:
-            print item.id
-            print item.name
             repJson = {
                 'userID' : item.id,
                 'username' : item.name
@@ -45,12 +43,101 @@ def get_reps():
 def change_rep():
         repID = request.args.get('repID')
         new_name = request.args.get('new_name')
+
         if not repID or not new_name:
             return 'Bad request', 400
 
+        rep_to_change = User.query.filter_by(id=repID).first()
+        old_name = rep_to_change.name
 
-        print(repID)
-        print(new_name)
+        rep_to_change.name = new_name
+        rep_to_change.email = 'rep_' + new_name
+        db.session.commit()
+
+        changed_rep = User.query.filter_by(id=repID).first()
+        
+        rep_res = {
+            'old name' : old_name,
+            'username' : changed_rep.name
+        }
+
+        return jsonify(rep_res)
+
+@app.route('/get_sessions', methods=['GET'])
+def get_sessions():
+        repID = request.args.get('repID')
+        sessionList = []
+
+        if not repID:
+            sessions = ChatSession.query.all()
+        else:
+            sessions = ChatSession.query.filter(or_(ChatSession.participant1==repID, ChatSession.participant2==repID)).all()
+        
+        for item in sessions:
+            sessionJson = {
+                'sessionID' : item.id,
+                'start time UTC' : str(item.start_time),
+                'participant1' : item.participant1,
+                'participant2' : item.participant2
+            }
+            sessionList.append(sessionJson)
+
+
+        return Response(json.dumps(sessionList), mimetype='application/json') 
+
+@app.route('/get_messages', methods=['GET'])
+def get_messages():
+        sessionID = request.args.get('sessionID')
+        messageList = []
+
+        if not sessionID:
+            return 'Bad request', 400
+            
+        messages = Message.query.filter_by(chatSession=sessionID).order_by(asc(Message.timestamp)).all()
+        
+        for item in messages:
+            messageJson = {
+                'userID' : item.user,
+                'timestamp UTC' : str(item.timestamp),
+                'sessionID' : item.chatSession,
+                'message' : item.message
+            }
+            messageList.append(messageJson)
+
+        return Response(json.dumps(messageList), mimetype='application/json') 
+
+@app.route('/delete_session', methods=['DELETE'])
+def delete_session():
+    sessionID = request.args.get('sessionID')
+
+    if not sessionID:
+        return 'Bad request', 400
+
+    chatSession = ChatSession.query.filter_by(id=sessionID).first()
+
+    if not chatSession:
+        return 'No sessions with ID:' + sessionID, 200
+
+    messages = Message.query.filter_by(chatSession=sessionID).all()
+    deletedJson = {
+        'session ID' : chatSession.id,
+        'deleted messages' : []
+    }
+
+
+    db.session.delete(chatSession)
+    for message in messages:
+        messageJson = {
+            'userID' : message.user,
+            'timestamp UTC' : str(message.timestamp),
+            'sessionID' : message.chatSession,
+            'message' : message.message
+        }
+        deletedJson['deleted messages'].append(messageJson)
+        db.session.delete(message)
+
+    db.session.commit()
+    return Response(json.dumps(deletedJson), mimetype='application/json') 
 
 @app.route('/')
 def index():
@@ -84,14 +171,13 @@ def new_message(data):
 # When client emits 'add rep' this listens and executes
 @socketio.on('add rep', namespace='/chat')
 def add_rep(data):
-	print 'Adding Rep'
 	global usernames
 	global number_of_users
 
 	session['username'] = data
         repname = 'rep_' + session['username']
+        session['email'] = repname
 	usernames[repname] = session['username']
-        print usernames
 
         user = User.query.filter_by(email=repname, rep=True).first()
         if not user:
@@ -162,9 +248,10 @@ def disconnect():
 
 	try:
 		del usernames[session['email']]
-		number_of_users -= 1
+	        number_of_users -= 1
                 chatSessionID = None
 		emit('user left', { 'username' : session['username'], 'numUsers' : number_of_users}, broadcast=True)
+                print ('User Disconnecting')
 
 	except:
 		pass

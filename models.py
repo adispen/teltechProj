@@ -39,6 +39,7 @@ class ChatSession(db.Model):
 class Message(db.Model):
     __tablename__ = 'Message'
     id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     user = db.Column(db.Integer, db.ForeignKey('User.id'))
     chatSession = db.Column(db.Integer, db.ForeignKey('ChatSession.id'))
     message = db.Column(db.String(255))
@@ -49,6 +50,6 @@ class Message(db.Model):
         self.message = message
 
     def __repr__(self):
-        return '(%d:%s:%s:[%s])' % (self.id, self.chatSession, self.user, self.message)
+        return '(%d:%s:%s:%s)' % (self.id, self.chatSession, self.user, self.message)
 
 
