@@ -55,10 +55,13 @@ $(function() {
           $loginModal.modal('toggle');
           $chatPage.show();
           $currentInput = $inputMessage.focus();
+          var payload = {
+              'username' : username,
+              'email' : email
+          };
     
           // Tell the server your username
-          socket.emit('add user', username);
-          socket.emit('show email', email);
+          socket.emit('add user', payload);
         }
       }
 
@@ -70,7 +73,7 @@ $(function() {
           $currentInput = $inputMessage.focus();
     
           // Tell the server your username
-          socket.emit('add user', username);
+          socket.emit('add rep', username);
         }
       }
     }
