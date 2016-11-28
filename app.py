@@ -35,7 +35,8 @@ def get_reps():
         for item in reps:
             repJson = {
                 'userID' : item.id,
-                'username' : item.name
+                'username' : item.name,
+                'email' : item.email
             }
             repList.append(repJson)
             
@@ -53,7 +54,6 @@ def change_rep():
         old_name = rep_to_change.name
 
         rep_to_change.name = new_name
-        rep_to_change.email = 'rep_' + new_name
         db.session.commit()
 
         changed_rep = User.query.filter_by(id=repID).first()
@@ -172,32 +172,6 @@ def new_message(data):
         db.session.add(message)
         db.session.commit()
 
-# When client emits 'add rep' this listens and executes
-@socketio.on('add rep', namespace='/chat')
-def add_rep(data):
-	global usernames
-	global number_of_users
-
-	session['username'] = data
-        repname = 'rep_' + session['username']
-        session['email'] = repname
-	usernames[repname] = session['username']
-
-        user = User.query.filter_by(email=repname, rep=True).first()
-        if not user:
-            user = User(session['username'], repname, True)
-            db.session.add(user)
-            db.session.commit()
-
-        session['userID'] = user.id
-
-	number_of_users += 1;
-        if number_of_users == 2:
-            create_session()
-
-	emit('login', { 'numUsers' : number_of_users })
-	emit('user joined', { 'username' : session['username'], 'numUsers': number_of_users }, broadcast=True)
-
 # When client emits 'add user' this listens and executes
 @socketio.on('add user', namespace='/chat')
 def add_user(data):
@@ -207,10 +181,11 @@ def add_user(data):
 	session['username'] = data['username']
         session['email'] = data['email']
 	usernames[data['email']] = session['username']
+        rep = data['rep']
 
-        user = User.query.filter_by(email=session['email'], rep=False).first()
+        user = User.query.filter_by(email=session['email'], rep=rep).first()
         if not user:
-            user = User(session['username'], session['email'])
+            user = User(session['username'], session['email'], rep)
             db.session.add(user)
             db.session.commit()
 
@@ -222,7 +197,8 @@ def add_user(data):
 
 	emit('login', { 'numUsers' : number_of_users })
 	emit('user joined', { 'username' : session['username'], 'numUsers': number_of_users }, broadcast=True)
-        emit('user email', { 'email' : session['email'], 'username' : session['username'] }, broadcast=True)
+        if not rep:
+            emit('user email', { 'email' : session['email'], 'username' : session['username'] }, broadcast=True)
 
 
 @socketio.on('typing', namespace='/chat')

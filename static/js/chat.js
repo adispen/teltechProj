@@ -1,30 +1,22 @@
 var $currentInput = $usernameInput.focus();
+var $emailInput = $('.emailInput');
 
 // Sets the client's username
 function setUsername () {
     username = cleanInput($usernameInput.val().trim());
-    if (username) {
+    email = cleanInput($emailInput.val().trim());
+    if (username && email) {
         $loginPage.fadeOut();
         $chatPage.show();
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
+        var payload = {
+            'username' : username,
+            'email' : email,
+            'rep' : true
+        };
 
         // Tell the server your username
-        socket.emit('add rep', username);
+        socket.emit('add user', payload);
     }
 }
-
-// Keyboard events
-
-$(window).keydown(function (event) {
-    // When the client hits ENTER on their keyboard
-    if (event.which === 13) {
-        if (username) {
-            sendMessage();
-            socket.emit('stop typing');
-            typing = false;
-        } else {
-            setUsername();
-        }
-    }
-});

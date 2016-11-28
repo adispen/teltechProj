@@ -17,7 +17,7 @@
 
 * ``` $ cd db/ ```
 * ``` $ sqlite3 production.db ```
-* ``` >> .mode csv ```
-* ``` >> .import users.csv User ```
-* ``` >> .import sessions.csv ChatSession ```
-* ``` >> .import messages.csv Message ```
+* ``` > .mode csv ```
+* ``` > .import users.csv User ```
+* ``` > .import sessions.csv ChatSession ```
+* ``` > .import messages.csv Message ```

@@ -1,7 +1,6 @@
-id,name,email,rep
-1,aedan,rep_aedan,1
+1,aedan,aedan@company.com,1
 2,kait,kait@test.com,0
 3,matt,matt@matt.com,0
-4,alison,rep_alison,1
-5,ed,rep_ed,1
+4,alison,alison@company.com,1
+5,ed,ed@company.com,1
 6,eric,eric@test.com,0

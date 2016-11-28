@@ -13,6 +13,7 @@ var $window = $(window);
 var $usernameInput = $('.usernameInput'); // Input for username
 var $messages = $('.messages'); // Messages area
 var $inputMessage = $('.inputMessage'); // Input message input box
+var $emailInput = $('.emailInput'); // Input for email if on main page
 
 var $loginPage = $('.login.page'); // The login page
 var $chatPage = $('.chat.page'); // The chatroom page
@@ -158,6 +159,25 @@ function getUsernameColor (username) {
     var index = Math.abs(hash % COLORS.length);
     return COLORS[index];
 }
+
+// Keyboard Events
+$(window).keydown(function (event) {
+    // When the client hits ENTER on their keyboard
+    if (event.which === 13) {
+        if (username) {
+            sendMessage();
+            socket.emit('stop typing');
+            typing = false;
+        } else {
+            // Check if fields are both filled in
+            if ($emailInput.val() === '' || $usernameInput.val() === ''){
+                alert('Please fill out both fields');
+            } else {
+                setUsername();
+            }
+        }
+    }
+});
 
 $inputMessage.on('input', function() {
     updateTyping();

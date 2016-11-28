@@ -1,4 +1,3 @@
-var $emailInput = $('.emailInput'); // Input for email if on main page
 var $loginModal = $('#loginModal');
 
 function setUsername () {
@@ -10,7 +9,8 @@ function setUsername () {
         $currentInput = $inputMessage.focus();
         var payload = {
             'username' : username,
-            'email' : email
+            'email' : email,
+            'rep' : false
         };
 
         // Tell the server your username
@@ -30,22 +30,4 @@ $('#invite-button').click(function() {
 });
 $('#menu-button').click(function() {
     $('#menu-glyph').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
-});
-
-$(window).keydown(function (event) {
-    // When the client hits ENTER on their keyboard
-    if (event.which === 13) {
-        if (username) {
-            sendMessage();
-            socket.emit('stop typing');
-            typing = false;
-        } else {
-            // Check if fields are both filled in
-            if ($emailInput.val() === '' || $usernameInput.val() === ''){
-                alert('Please fill out both fields');
-            } else {
-                setUsername();
-            }
-        }
-    }
 });
