@@ -122,7 +122,7 @@ def delete_session():
 
     messages = Message.query.filter_by(chatSession=sessionID).all()
     deletedJson = {
-        'session ID' : chatSession.id,
+        'deleted session ID' : chatSession.id,
         'deleted messages' : []
     }
 

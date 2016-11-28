@@ -1,5 +1,4 @@
 var $currentInput = $usernameInput.focus();
-var $emailInput = $('.emailInput');
 
 // Sets the client's username
 function setUsername () {
