@@ -1,6 +1,6 @@
 # Install Instructions
 
-#### Requires: python, python-devel, sqlite3, pip, and virtualenv
+#### Requires: python, python-devel, sqlite3, pip, npm, and virtualenv
 
 * Clone locally
 * ``` $ cd teltechProj ```
@@ -8,6 +8,8 @@
 * ``` $ source venv/bin/activate ```
 * ``` $ pip install -r requirements.txt ```
 * ``` $ python -c "from models import db; db.create_all()" ```
+* ``` $ npm install ```
+* ``` $ gulp ```
 * ``` $ python app.py ```
 * navigate to ```localhost:5000``` or ```localhost:5000/chat```
 
