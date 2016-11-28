@@ -24,7 +24,7 @@
 
 # API Examples
 
-#### List of Chat Representatives
+#### Get a List of Chat Representatives
 ``` 
 localhost:5000/get_reps
 
