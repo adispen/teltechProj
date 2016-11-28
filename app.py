@@ -1,10 +1,12 @@
-from flask import Flask, render_template, session, request, jsonify, Response, abort
-from flask.ext.socketio import SocketIO, emit, disconnect
+from flask import Flask, render_template, session, request, jsonify, Response, abort, send_file
+from flask_socketio import SocketIO, emit, disconnect
+from flask_triangle import Triangle
 from sqlalchemy import *
 from models import db, User, ChatSession, Message
 import json
 
 app = Flask(__name__)
+Triangle(app)
 app.debug = True
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
@@ -142,9 +144,11 @@ def delete_session():
 @app.route('/')
 def index():
 	return render_template('content.html')
+        #return send_file("templates/index.html")
 
 @app.route('/chat')
 def chat():
+        #return send_file("templates/index.html")
 	return render_template('chat.html')
 
 
@@ -197,14 +201,12 @@ def add_rep(data):
 # When client emits 'add user' this listens and executes
 @socketio.on('add user', namespace='/chat')
 def add_user(data):
-	print 'Adding User'
 	global usernames
 	global number_of_users
 
 	session['username'] = data['username']
         session['email'] = data['email']
 	usernames[data['email']] = session['username']
-        print usernames
 
         user = User.query.filter_by(email=session['email'], rep=False).first()
         if not user:
