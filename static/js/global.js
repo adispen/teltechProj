@@ -22,7 +22,7 @@ var username;
 var email;
 var connected = false;
 var typing = false;
-var lastTypingTime;
+var lastTypingID;
 
 var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
@@ -132,15 +132,10 @@ function updateTyping () {
             typing = true;
             socket.emit('typing');
         }
-        lastTypingTime = (new Date()).getTime();
-
-        setTimeout(function () {
-            var typingTimer = (new Date()).getTime();
-            var timeDiff = typingTimer - lastTypingTime;
-            if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-                socket.emit('stop typing');
-                typing = false;
-            }
+        clearTimeout(lastTypingID);
+        lastTypingID = setTimeout(function (){
+            socket.emit('stop typing');
+            typing = false;
         }, TYPING_TIMER_LENGTH);
     }
 }
